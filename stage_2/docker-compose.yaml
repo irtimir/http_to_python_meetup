@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  proxy:
+    image: nginx:1.25
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf:ro"
+    restart: always
+    ports:
+      - "8080:80"
+      - "8081:81"
+  uwsgi:
+    image: uwsgi
+    build:
+      context: .
+      dockerfile: Dockerfile.uwsgi
+    depends_on: [proxy]
+    restart: always
+  gunicorn:
+    image: gunicorn
+    build:
+      context: .
+      dockerfile: Dockerfile.gunicorn
+    depends_on: [proxy]
+    restart: always
+    environment:
+      PYTHONUNBUFFERED: TRUE  # disable the Python stdout buffering
