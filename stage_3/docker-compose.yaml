@@ -6,6 +6,7 @@ services:
     volumes:
       - "./nginx.conf:/etc/nginx/nginx.conf:ro"
       - "static-volume:/public/static:ro"
+    depends_on: [gunicorn]
     restart: always
     ports:
       - "8080:80"
@@ -14,7 +15,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.gunicorn
-    depends_on: [proxy]
     volumes:
       - "./src:/app"
       - "./gunicorn.conf.py:/gunicorn.conf.py"
