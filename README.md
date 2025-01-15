@@ -50,3 +50,16 @@ Connecting a django app to `gunicorn` and serving static files with `nginx`.
 cd stage_3
 docker compose up --build
 ```
+
+## Stage 4
+
+### Common scheme
+
+![stage 4 scheme](https://github.com/irtimir/http_to_python_meetup/blob/master/docs_static/stage_4_scheme.png?raw=true)
+
+### Run
+
+```shell
+cd stage_4
+docker compose up --build
+```

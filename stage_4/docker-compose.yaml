@@ -1,0 +1,35 @@
+services:
+  traefik:
+    image: "traefik:v3.3"
+    command:
+      - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--accesslog"
+      - "--api"
+      - "--api.insecure=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  backend:
+    build: .
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.${STACK_NAME?Variable not set}-backend.loadbalancer.server.port=8000"
+
+      - "traefik.http.routers.${STACK_NAME?Variable not set}-backend-http.rule=PathPrefix(`/api`)"
+      - "traefik.http.routers.${STACK_NAME?Variable not set}-backend-http.entrypoints=web"
+
+  static:
+    image: "nginx:1.27-alpine"
+    volumes:
+      - "./static:/usr/share/nginx/html/static:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.${STACK_NAME?Variable not set}-static.loadbalancer.server.port=80"
+
+      - "traefik.http.routers.${STACK_NAME?Variable not set}-static-http.rule=PathPrefix(`/static`)"
+      - "traefik.http.routers.${STACK_NAME?Variable not set}-static-http.entrypoints=web"
